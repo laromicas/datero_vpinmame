@@ -48,7 +48,7 @@ def main():
 
     with ThreadPoolExecutor(max_workers=10) as executor:
         for file in ia.files_from_folder(DAT_FOLDER):
-            if not file['name'].startswith('fix'):
+            if 'fix_VPinMAME' not in file['name']:
                 executor.submit(download_dats, ia.get_download_path(), file['name'])
 
     os.system(f'cd {TMP_DATS} && unzip -o \'*.zip\'')
