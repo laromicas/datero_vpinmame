@@ -1,0 +1,64 @@
+#!/bin/env python3
+
+import os
+import sys
+from concurrent.futures import ThreadPoolExecutor
+
+DATERO_HOME = os.getenv('DATERO_HOME', os.getcwd())
+sys.path.append(DATERO_HOME)
+
+from datero.repositories.ia import InternetArchive
+
+
+TMP = 'tmp'
+WORK_FOLDER = os.getenv('WORK_FOLDER', os.getcwd())
+SEED_NAME = os.getenv('SEED_NAME', os.path.basename(os.getcwd()))
+TMP_DIR = os.path.join(WORK_FOLDER, os.getenv('TMP_FOLDER', 'tmp'))
+TMP_VPINMAME = os.path.join(TMP_DIR, SEED_NAME)
+TMP_DATS = os.path.join(TMP_VPINMAME, 'dats')
+
+
+MAIN_URL = 'http://archive.org'
+ARCHIVE_URL = 'vpinmame'
+DAT_FOLDER = 'dat'
+
+def get_archive_item(url):
+    return url.split('/')[-1]
+
+def mktmpdirs():
+    os.makedirs(TMP_DIR, exist_ok=True)
+    os.makedirs(TMP_VPINMAME, exist_ok=True)
+    os.makedirs(TMP_DATS, exist_ok=True)
+
+def clean():
+    # delete old files
+    os.system(f'rm -rf {TMP_VPINMAME}/*')
+
+
+def main():
+    os.makedirs(TMP_DATS, exist_ok=True)
+    def download_dats(download_path, file):
+        url = os.path.join(download_path, file)
+        os.system(f'cd {TMP_DATS} && aria2c --file-allocation=prealloc "{url}"')
+
+    print('Fetching Archive.org DAT files')
+    ia = InternetArchive(ARCHIVE_URL)
+
+    print('Downloading new dats')
+
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        for file in ia.files_from_folder(DAT_FOLDER):
+            if not file['name'].startswith('fix'):
+                executor.submit(download_dats, ia.get_download_path(), file['name'])
+
+    os.system(f'cd {TMP_DATS} && unzip -o \'*.zip\'')
+    os.system(f'cd {TMP_DATS} && rm *.zip')
+
+    # zip files in TMP_DIR with 7z
+    print('Zipping files')
+    os.system(f'cd {TMP_DIR} && 7z a -tzip t-en.zip t-en')
+
+if __name__ == '__main__':
+    mktmpdirs()
+    clean()
+    main()
