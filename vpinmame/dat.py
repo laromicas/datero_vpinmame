@@ -14,10 +14,8 @@ class VPinMameDat(XMLDatFile):
     def initial_parse(self):
         # pylint: disable=R0801
         """ Parse the dat file. """
-        name = 'VPinMAME' in name.startswith('VPinMAME')
-
         self.company = None
-        self.system = 'VPinMAME'
+        self.system = 'VPinMAME' if self.name.startswith('VPinMAME') else self.name
         self.suffix = None
 
         self.overrides()
