@@ -1,0 +1,15 @@
+[
+    {
+        "name": "VpinMAME DAT",
+        "class_name": "datero.seeds.vpinmame.vpinmame.dat.VPinMameDat",
+        "seed": "vpinmame",
+        "priority": 50,
+        "rules": [
+            {
+                "key": "name",
+                "operator": "contains",
+                "value": "VPinMAME"
+            }
+        ]
+    }
+]

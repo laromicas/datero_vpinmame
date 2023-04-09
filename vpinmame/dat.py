@@ -1,7 +1,6 @@
 """
     TranslatedEnglish Dat class to parse different types of dat files.
 """
-import re
 
 from datero.repositories.dat import XMLDatFile
 from datero.commands import config
