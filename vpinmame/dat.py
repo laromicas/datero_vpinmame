@@ -3,7 +3,7 @@
 """
 
 from datero.repositories.dat import XMLDatFile
-from datero.commands import config
+from datero.configuration import config
 
 
 class VPinMameDat(XMLDatFile):
@@ -25,4 +25,3 @@ class VPinMameDat(XMLDatFile):
             self.preffix = None
 
         return [self.preffix, self.company, self.system, self.suffix, self.get_date()]
-
